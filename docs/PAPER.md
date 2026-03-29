@@ -1,7 +1,12 @@
-# Morphogenetic Perturbation of the Pigeonhole Principle: Emergent Competencies in Distributed Constraint Management
-
-**Date:** March 2026
-
+---
+title: |
+  On Faultization:\
+  Pigeonhole Principle.\
+  Morphogenetic Competencies Under\
+  Irreducible Constraint
+author: PIATRA . INSTITUTE
+date: March 2026
+---
 
 ## Abstract
 
