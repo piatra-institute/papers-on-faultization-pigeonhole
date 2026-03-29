@@ -10,7 +10,7 @@ date: March 2026
 
 ## Abstract
 
-We apply the morphogenetic perturbation methodology of Levin and collaborators to the pigeonhole principle, a classical impossibility theorem reinterpreted as a distributed multi-agent system. In our model, $m = 10$ autonomous pigeons must self-organize into $n = 7$ holes under four local placement policies (GREEDY, EXPLORATORY, REPULSIVE, COOPERATIVE), with no centralized controller. Because $m > n$, overload $O \geq m - n = 3$ is irreducible; the system cannot solve the problem, only manage it. We subject this system to eight systematic perturbation experiments ($n = 30$ replications, 500 steps, paired $t$-tests with matched seeds): frozen-hole robustness, policy comparison, noisy perception, view-radius sweep, chimeric mixed-policy populations, dynamic damage and recovery, progressive versus sudden damage, and misleading (deceptive) holes. We find that (1) the system converges to the theoretical minimum overload in six of eight experiments, demonstrating strong emergent competency; (2) all four policies achieve identical final overload but diverge dramatically in process efficiency (failed placements differ by up to 117\%, $p < 0.0001$); (3) perceptual noise causes immediate monotonic degradation with no tolerance threshold ($\rho = +0.638$, $p < 0.0001$); (4) misleading holes are far more damaging than frozen holes, paralleling Levin's distinction between damaged and deceptive substrates; and (5) no delayed gratification is observed in any condition (DG Index $= 0.0$ universally). We classify these findings within the morphogenetic competency framework and compare them to prior results on sorting algorithms and transformer training.
+We apply the morphogenetic perturbation methodology of Levin and collaborators to the pigeonhole principle, a classical impossibility theorem reinterpreted as a distributed multi-agent system. In our model, $m = 10$ autonomous pigeons must self-organize into $n = 7$ holes under four local placement policies (GREEDY, EXPLORATORY, REPULSIVE, COOPERATIVE), with no centralized controller. Because $m > n$, overload $O \geq m - n = 3$ is irreducible; the system cannot solve the problem, only manage it. We subject this system to eight systematic perturbation experiments ($n = 30$ replications, 500 steps, paired $t$-tests with matched seeds): frozen-hole robustness, policy comparison, noisy perception, view-radius sweep, chimeric mixed-policy populations, dynamic damage and recovery, progressive versus sudden damage, and misleading (deceptive) holes. We find that (1) the system converges to the theoretical minimum overload in six of eight experiments, demonstrating strong emergent competency; (2) all four policies achieve identical final overload but diverge dramatically in process efficiency (failed placements differ by up to 117\%, $p < 0.0001$); (3) perceptual noise causes immediate monotonic degradation with no tolerance threshold ($\rho = +0.638$, $p < 0.0001$); (4) misleading holes are far more damaging than frozen holes (up to 47\% overload increase), paralleling Levin's distinction between damaged and deceptive substrates; and (5) no delayed gratification is observed in any condition (DG Index $= 0.0$ universally). We classify these findings within the morphogenetic competency framework and compare them to prior results on sorting algorithms and transformer training.
 
 
 ## 1. Introduction
@@ -36,7 +36,7 @@ Our contributions are as follows:
 - We formalize the pigeonhole principle as a distributed multi-agent system with four local placement policies, a composite potential function, and a hook-based perturbation architecture that enables systematic intervention at every decision point.
 - We conduct eight systematic experiments spanning substrate damage, perceptual noise, information radius, policy heterogeneity, dynamic damage/recovery, and substrate deception, with rigorous statistical analysis ($n = 30$ replications, paired $t$-tests, Cohen's $d$ effect sizes, Spearman correlations).
 - We demonstrate that local policies achieve global optimality in six of eight conditions, constituting a strong emergent competency in the Levin framework -- the system finds the theoretical minimum overload using only local rules and no global coordination.
-- We identify a sharp distinction between damaged substrate (frozen holes, which the system routes around with zero performance loss) and deceptive substrate (misleading holes, which cause up to 51\% overload degradation), paralleling theoretical predictions from the basal cognition literature.
+- We identify a sharp distinction between damaged substrate (frozen holes, which the system routes around with zero performance loss) and deceptive substrate (misleading holes, which cause up to 47\% overload degradation), paralleling theoretical predictions from the basal cognition literature.
 - We report a universal absence of delayed gratification across all conditions (DG Index $= 0.0$), establishing that the pigeonhole system's optimization landscape is monotonically navigable and contains no detour-requiring basins.
 - We provide the first morphogenetic perturbation analysis of an impossibility theorem, extending the framework from solvable problems (sorting, training) to fundamentally unsolvable ones.
 
@@ -172,10 +172,10 @@ We present results for all eight experiments. Each experiment was run with $n = 
 | Experiment | Key Condition | Primary Metric | Value | $\Delta$\% | $p$ | $d$ |
 |------------|--------------|----------------|-------|-----------|-----|-----|
 | 1: Frozen Robustness | frozen\_3 | Overload ratio | 1.000 | $0.0$ | n.s. | $0.0$ |
-| 1: Frozen Robustness | frozen\_5 | Overload ratio | 0.313 | $-68.7$ | $< 0.0001$ | $-3.840$ |
+| 1: Frozen Robustness | frozen\_5 | Overload ratio | 0.313 | $-68.8$ | $< 0.0001$ | $-3.840$ |
 | 2: Policy Comparison | REPULSIVE | Failed placements | 84.6 | $-60.1$ | $< 0.0001$ | $-11.116$ |
 | 3: Noisy Perception | $\sigma = 1.0$ | Overload | 3.53 | $+17.8$ | $< 0.0001$ | $+1.051$ |
-| 4: View Radius | $r = 2$ | Convergence | 6.0 | $-49.2$ | $0.0093$ | $-0.509$ |
+| 4: View Radius | $r = 2$ | Convergence | 6.0 | $-48.7$ | $0.0093$ | $-0.509$ |
 | 5: Chimeric | REP+COOP | Aggregation | 0.796 | -- | -- | -- |
 | 6: Recovery | damage\_and\_heal | Overload | 3.0 | $0.0$ | n.s. | $0.0$ |
 | 7: Progressive | gradual | Failed placements | 128.9 | $-25.7$ | $< 0.0001$ | $-4.116$ |
@@ -191,13 +191,13 @@ Freezing holes reduces the number of usable holes from $n$ to $n - k$, raising t
 | frozen\_1 | 4.0 | 1.000 | 0.0 | n.s. | 0.0 |
 | frozen\_2 | 5.0 | 1.000 | 0.0 | n.s. | 0.0 |
 | frozen\_3 | 6.0 | 1.000 | 0.0 | n.s. | 0.0 |
-| frozen\_4 | 6.9 | 0.924 | 0.0 | $p = 0.0002$*** | $-0.783$ |
-| frozen\_5 | 4.7 | 0.313 | 0.0 | $p < 0.0001$*** | $-3.840$ |
-| frozen\_6 | 3.1 | 0.174 | 0.0 | $p < 0.0001$*** | $-5.697$ |
+| frozen\_4 | 6.47 | 0.924 | 0.0 | $p = 0.0002$*** | $-0.783$ |
+| frozen\_5 | 2.50 | 0.313 | 0.0 | $p < 0.0001$*** | $-3.840$ |
+| frozen\_6 | 1.57 | 0.174 | 0.0 | $p < 0.0001$*** | $-5.697$ |
 
 **Key finding.** The system reaches the theoretical minimum overload (ratio $= 1.0$) for 0 through 3 frozen holes, demonstrating perfect redistribution around up to 43\% substrate damage. At 4 frozen holes (57\% damage), efficiency drops to 92.4\%; at 5--6 frozen holes, the system is severely impaired. The DG Index is 0.0 in all conditions: the system never temporarily increases overload to later improve. Spearman correlation between frozen holes and overload ratio: $\rho = -0.1498$, $p = 0.030$*.
 
-Note on the overload ratio: the ratio *decreases* with more frozen holes because the theoretical minimum grows faster than the actual overload. At frozen\_5, the theoretical minimum is $m - (n - 5) = 10 - 2 = 8$, but actual overload is only 4.7; the system leaves many pigeons unable to find any active hole. At frozen\_6, only one hole is active and can hold at most one pigeon, so 9 of 10 pigeons must be either unplaced or crowded into a single hole. The system's failure at this extreme reflects the physical impossibility of placing 10 pigeons into 1 hole efficiently, not a failure of the local policies.
+Note on the overload ratio: the ratio *decreases* with more frozen holes because the theoretical minimum grows faster than the actual overload. At frozen\_5, the theoretical minimum is $m - (n - 5) = 10 - 2 = 8$, but actual overload is only 2.50; the system leaves many pigeons unable to find any active hole. At frozen\_6, only one hole is active and can hold at most one pigeon, so 9 of 10 pigeons must be either unplaced or crowded into a single hole. The system's failure at this extreme reflects the physical impossibility of placing 10 pigeons into 1 hole efficiently, not a failure of the local policies.
 
 The robustness curve has a clear phase transition between frozen\_3 (perfect performance) and frozen\_4 (significant degradation). At frozen\_3, the system still has 4 active holes for 10 pigeons, giving a density of $10/4 = 2.5$ pigeons per hole and theoretical minimum overload of 6. At frozen\_4, only 3 holes remain ($10/3 = 3.33$ density), and the system begins to miss the optimum. This transition point at roughly 50\% substrate damage provides a quantitative robustness boundary.
 
@@ -285,13 +285,13 @@ Mixed populations of $m = 12$ pigeons and $n = 8$ holes (1 frozen, theoretical m
 | Policy Pair | Final Overload | Aggregation Score |
 |-------------|---------------|-------------------|
 | GREEDY + COOPERATIVE | 4.0 | 0.738 |
-| GREEDY + EXPLORATORY | 4.0 | 0.757 |
-| EXPLORATORY + COOPERATIVE | 4.0 | 0.771 |
+| GREEDY + EXPLORATORY | 4.0 | 0.738 |
+| EXPLORATORY + COOPERATIVE | 4.0 | 0.754 |
 | REPULSIVE + COOPERATIVE | 4.0 | 0.796 |
 
 No pairwise overload differences between any pair (all $p = \text{n.s.}$).
 
-**Key finding.** All chimeric combinations reach identical final overload. The outcome invariance observed in Experiment 2 (homogeneous populations) extends to heterogeneous populations. Aggregation scores range from 0.738 to 0.796, indicating moderate clustering by policy type: pigeons following the same local rule tend to co-occupy holes at rates above chance. The REPULSIVE + COOPERATIVE pair shows the highest aggregation (0.796), suggesting that the spatial separation behavior of REPULSIVE pigeons creates niches that COOPERATIVE pigeons then fill.
+**Key finding.** All chimeric combinations reach identical final overload. The outcome invariance observed in Experiment 2 (homogeneous populations) extends to heterogeneous populations. Aggregation scores range from 0.738 to 0.796, indicating moderate clustering by policy type: pigeons following the same local rule tend to co-occupy holes at rates above chance. The REPULSIVE + COOPERATIVE pair shows the highest aggregation (0.796), suggesting that the spatial separation behavior of REPULSIVE pigeons creates niches that COOPERATIVE pigeons then fill. GREEDY + COOPERATIVE and GREEDY + EXPLORATORY produce identical aggregation (0.738), indicating that GREEDY's dominant load-minimization strategy absorbs the partner policy's distinctive effects.
 
 The aggregation scores (0.738--0.796) are well above the chance level of 0.5 (expected for two equally-represented policies assigned randomly to holes). This indicates that the local decision rules create implicit spatial preferences that sort pigeons by type. The mechanism is intuitive: REPULSIVE pigeons actively flee crowded holes, creating vacancies that COOPERATIVE pigeons (which evaluate global potential) preferentially fill. This produces a spontaneous division of the substrate into REPULSIVE-dominated low-density holes and COOPERATIVE-dominated high-density holes.
 
@@ -353,14 +353,14 @@ Misleading holes report their load as 0 regardless of true occupancy, actively d
 | 2 | 4.20 | $+40.0$\% | $< 0.0001$*** | $+1.298$ |
 | 3 | 4.33 | $+44.4$\% | $< 0.0001$*** | $+1.508$ |
 | 4 | 4.40 | $+46.7$\% | $< 0.0001$*** | $+1.350$ |
-| 5 | 4.47 | $+49.0$\% | $< 0.0001$*** | $+1.425$ |
-| 6 | 4.53 | $+51.1$\% | $< 0.0001$*** | $+1.490$ |
+| 5 | 4.37 | $+45.6$\% | $< 0.0001$*** | $+1.323$ |
+| 6 | 4.30 | $+43.3$\% | $< 0.0001$*** | $+1.482$ |
 
 Spearman correlation (misleading holes vs overload): $\rho = +0.417$, $p < 0.0001$***.
 
 **Key finding.** Misleading holes are substantially more damaging than frozen holes. A single misleading hole increases overload by 25.6\% ($d = +0.938$), whereas a single frozen hole has zero effect on overload ratio (Experiment 1). The distinction is mechanistic: frozen holes are simply absent from the system, and pigeons can route around them. Misleading holes are actively present and actively deceptive: they attract pigeons by reporting zero load, then absorb pigeons into what is actually a crowded hole, inflating overload.
 
-A plateau effect is visible: degradation is steepest for the first 1--2 misleading holes (25.6\% and 40.0\%) and levels off thereafter (46.7\% at 4 misleading, 51.1\% at 6). This suggests that once a critical fraction of holes is deceptive, additional deception has diminishing marginal effect because pigeons are already making near-random decisions.
+A plateau-and-reversal effect is visible: degradation is steepest for the first 1--2 misleading holes (25.6\% and 40.0\%), peaks at 4 misleading holes (46.7\%), and then decreases slightly at 5--6 misleading holes (45.6\% and 43.3\%). This suggests that once a critical fraction of holes is deceptive, additional deception has diminishing marginal effect and may even slightly reduce overload, likely because when nearly all holes are misleading, the deception becomes uniform and ceases to create differential attraction.
 
 The comparison between Experiments 1 and 8 is the most informative contrast in our study. Consider a system with 1 frozen hole versus 1 misleading hole. The frozen-hole system has 6 active holes and theoretical minimum overload $= 4$; it reaches 4.0 (ratio $= 1.0$). The misleading-hole system has 7 active holes (the misleading hole still accepts pigeons) and theoretical minimum overload $= 3$; it reaches 3.77 (ratio $= 1.26$). The frozen hole causes zero efficiency loss; the misleading hole causes 26\% efficiency loss. Damage removes capacity but preserves information accuracy; deception preserves capacity but destroys information accuracy. The system tolerates the former far better than the latter.
 

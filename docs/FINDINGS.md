@@ -17,10 +17,10 @@
 | frozen_0 (baseline) | 3.0 | 1.000 | -- | -- | -- |
 | frozen_1 | 4.0 | 1.000 | -- | 0.00 | Tolerance |
 | frozen_2 | 5.0 | 1.000 | -- | 0.00 | Tolerance |
-| frozen_3 | 7.0 | 1.000 | -- | 0.00 | Tolerance |
-| frozen_4 | 10.8 | 0.924 | 0.0002*** | 0.87 | Structural Constraint |
-| frozen_5 | 19.1 | 0.313 | <0.0001*** | 2.41 | Structural Constraint |
-| frozen_6 | 51.4 | 0.174 | <0.0001*** | 4.12 | Structural Constraint |
+| frozen_3 | 6.0 | 1.000 | -- | 0.00 | Tolerance |
+| frozen_4 | 6.47 | 0.924 | 0.0002*** | 0.78 | Structural Constraint |
+| frozen_5 | 2.50 | 0.313 | <0.0001*** | 3.84 | Structural Constraint |
+| frozen_6 | 1.57 | 0.174 | <0.0001*** | 5.70 | Structural Constraint |
 
 - **DG index**: 0.0 across all conditions (no differentiation geometry effects)
 - **Key finding**: System reaches theoretical minimum overload for 0-3 frozen holes, then degrades sharply. The transition at frozen_4 marks a phase boundary where the system can no longer fully compensate.
@@ -49,10 +49,10 @@
 | Condition | Overload Change | p-value | Cohen's d |
 |-----------|----------------|---------|-----------|
 | noise_0.0 (baseline) | -- | -- | -- |
-| noise_0.5 | +12.2% | 0.0011** | 0.64 |
-| noise_1.0 | +17.8% | <0.0001*** | 0.91 |
-| noise_2.0 | +28.9% | <0.0001*** | 1.53 |
-| noise_5.0 | +43.3% | <0.0001*** | 2.28 |
+| noise_0.5 | +12.2% | 0.0011** | 0.66 |
+| noise_1.0 | +17.8% | <0.0001*** | 1.05 |
+| noise_2.0 | +28.9% | <0.0001*** | 1.38 |
+| noise_5.0 | +43.3% | <0.0001*** | 1.85 |
 
 - **Spearman correlation** (noise level vs overload): rho = +0.638, p < 0.0001***
 - **Key finding**: Monotonic degradation with no noise buffer. Unlike transformer training (Levin et al., 2024), where mild noise can be tolerated or even beneficial, any perceptual noise immediately degrades performance. The system has zero tolerance for information corruption.
@@ -119,7 +119,7 @@
 
 ## Experiment 8: Misleading Holes
 
-**Perturbation**: Mark 1-4 holes as misleading (report artificially low load, attracting pigeons to already-full holes).
+**Perturbation**: Mark 0-6 holes as misleading (report artificially low load, attracting pigeons to already-full holes).
 
 | Condition | Overload Change | p-value |
 |-----------|----------------|---------|
@@ -128,9 +128,11 @@
 | misleading_2 | +40.0% | <0.0001*** |
 | misleading_3 | +44.4% | <0.0001*** |
 | misleading_4 | +46.7% | <0.0001*** |
+| misleading_5 | +45.6% | <0.0001*** |
+| misleading_6 | +43.3% | <0.0001*** |
 
 - **Spearman correlation** (misleading count vs overload): rho = +0.417, p < 0.0001***
-- **Key finding**: Misleading holes cause the most severe degradation of any perturbation. A single misleading hole raises overload by 25.6%, and the effect plateaus around 3-4 misleading holes (+44-47%). This is far worse than frozen holes (which are managed optimally up to 3). The system can route around absent resources but cannot overcome deceptive ones.
+- **Key finding**: Misleading holes cause the most severe degradation of any perturbation. A single misleading hole raises overload by 25.6%, peaking at 4 misleading holes (+46.7%) and then slightly decreasing at 5--6 misleading holes (+45.6% and +43.3%). This plateau-and-reversal likely occurs because when nearly all holes are misleading, the deception becomes uniform. This is far worse than frozen holes (which are managed optimally up to 3). The system can route around absent resources but cannot overcome deceptive ones.
 - **Classification**: Structural Constraint (deceptive substrate fundamentally undermines optimization)
 
 
