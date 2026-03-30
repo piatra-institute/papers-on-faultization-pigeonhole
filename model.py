@@ -232,6 +232,13 @@ class PigeonholeSystem:
     def n_active_holes(self) -> int:
         return int(np.sum([s == HoleStatus.ACTIVE for s in self.hole_status]))
 
+    def n_usable_holes(self) -> int:
+        """Holes that can still accept pigeons.
+
+        Misleading holes are deceptive but usable; frozen holes are not.
+        """
+        return int(np.sum([s != HoleStatus.FROZEN for s in self.hole_status]))
+
     def _record(self) -> None:
         loads = self.loads()
         self.probe.record(

@@ -6,15 +6,16 @@ Morphogenetic perturbation of the pigeonhole principle, applying Levin et al.'s 
 
 The classical pigeonhole principle states that if m > n pigeons are placed into n holes, at least one hole must contain more than one pigeon. We reinterpret this impossibility theorem as a dynamical system: each pigeon is an autonomous agent with a local policy, each hole is a stateful resource, and the system self-organizes around the irreducible constraint (overload >= m - n).
 
-Eight experiments systematically perturb the system -- freezing holes, corrupting perception, restricting visibility, mixing policies, damaging and healing substrate -- to reveal emergent competencies not prescribed by the local rules.
+Eight experiments systematically perturb the system -- freezing holes, corrupting perception, restricting visibility, mixing policies, damaging and healing substrate -- to reveal emergent competencies, retry persistence, and fault-induced bias not prescribed by the local rules.
 
 ## Key Findings
 
 - **Complete optimization**: Local policies reach theoretical minimum overload in 6 of 8 experiments
-- **Policy indifference**: All four policies achieve identical outcomes but differ dramatically in process (failed placements vary by 5x)
+- **Policy indifference with process divergence**: All four policies achieve identical outcomes but differ dramatically in process (failed placements vary by 5x, same-target retry from 0.46 to 1.00)
 - **No noise buffer**: Unlike transformer training, perceptual noise causes immediate monotonic degradation
-- **Deceptive substrate is most damaging**: Misleading holes (+25-47% overload) are far worse than frozen holes (managed optimally up to 3)
-- **Complete recovery**: System rapidly re-optimizes after both damage and healing events
+- **No convincing agent-level learning**: Rejected pigeons often retry faulty substrate instead of learning to avoid it
+- **Deceptive substrate induces bias**: A single misleading hole attracts 36% of pigeons and 66% of overload while raising overload by 25.6%
+- **Complete recovery**: The collective state re-optimizes after damage and healing even though retry persistence remains non-zero
 
 ## Quick Start
 

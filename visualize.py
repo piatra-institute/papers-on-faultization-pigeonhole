@@ -48,14 +48,14 @@ def plot_robustness_curve(results: dict[str, list[dict]], path: str | Path) -> N
 
 
 def plot_policy_comparison(results: dict[str, list[dict]], path: str | Path) -> None:
-    """Bar chart comparing policies on final overload, DG index, convergence.
+    """Bar chart comparing policies on endpoint and fault-persistence metrics.
 
     Expects keys like 'GREEDY', 'EXPLORATORY', ..., each mapping to a list
     of RunSummary dicts.
     """
     policies = list(results.keys())
-    metric_keys = ['final_overload', 'dg_index', 'convergence_step']
-    labels = ['Final Overload', 'DG Index', 'Convergence Step']
+    metric_keys = ['final_overload', 'total_failed_placements', 'post_failure_same_target_rate']
+    labels = ['Final Overload', 'Failed Placements', 'Same-Target Retry Rate']
 
     fig, axes = plt.subplots(1, 3, figsize=(14, 5))
     for ax, metric, label in zip(axes, metric_keys, labels):
@@ -253,29 +253,41 @@ def plot_chimeric_aggregation(results: dict[str, dict], path: str | Path) -> Non
 
 
 def plot_misleading_tolerance(results: dict[str, list[dict]], path: str | Path) -> None:
-    """Plot overload ratio vs. number of misleading holes.
+    """Plot overload and deceptive-occupancy bias vs misleading-hole count.
 
     Expects keys like 'misleading_0', 'misleading_1', ..., each mapping
     to a list of RunSummary dicts.
     """
     levels: list[int] = []
-    means: list[float] = []
-    stds: list[float] = []
+    overload_means: list[float] = []
+    overload_stds: list[float] = []
+    bias_means: list[float] = []
+    bias_stds: list[float] = []
     for key, summaries in sorted(results.items(), key=lambda x: int(x[0].split('_')[-1])):
         n = int(key.split('_')[-1])
-        ratios = [s['overload_ratio'] for s in summaries]
+        overloads = [s['final_overload'] for s in summaries]
+        biases = [s['misleading_occupancy_bias'] for s in summaries]
         levels.append(n)
-        means.append(float(np.mean(ratios)))
-        stds.append(float(np.std(ratios)))
+        overload_means.append(float(np.mean(overloads)))
+        overload_stds.append(float(np.std(overloads)))
+        bias_means.append(float(np.mean(biases)))
+        bias_stds.append(float(np.std(biases)))
 
-    fig, ax = plt.subplots(figsize=(8, 5))
-    ax.errorbar(levels, means, yerr=stds, marker='D', capsize=4, linewidth=2,
-                color='tab:purple')
-    ax.set_xlabel('Number of Misleading Holes')
-    ax.set_ylabel('Overload Ratio')
-    ax.set_title('Misleading Hole Tolerance')
-    ax.axhline(y=1.0, color='gray', linestyle='--', alpha=0.5)
-    ax.grid(True, alpha=0.3)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    ax1.errorbar(levels, overload_means, yerr=overload_stds, marker='D',
+                 capsize=4, linewidth=2, color='tab:purple')
+    ax1.set_xlabel('Number of Misleading Holes')
+    ax1.set_ylabel('Final Overload')
+    ax1.set_title('Misleading Holes: Overload')
+    ax1.grid(True, alpha=0.3)
+
+    ax2.errorbar(levels, bias_means, yerr=bias_stds, marker='o', capsize=4,
+                 linewidth=2, color='tab:red')
+    ax2.set_xlabel('Number of Misleading Holes')
+    ax2.set_ylabel('Occupancy Bias')
+    ax2.set_title('Misleading Holes: Occupancy Bias')
+    ax2.axhline(y=0.0, color='gray', linestyle='--', alpha=0.5)
+    ax2.grid(True, alpha=0.3)
     fig.tight_layout()
     fig.savefig(path, dpi=150)
     plt.close(fig)

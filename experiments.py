@@ -49,8 +49,8 @@ def _run_one(config: Config, hooks: Hooks | None = None) -> tuple[PigeonholeSyst
     probe = Probe()
     sys = PigeonholeSystem(config, hooks=hooks, probe=probe)
     sys.run()
-    n_active = sys.n_active_holes()
-    summary = summarize_run(probe, config.m, n_active)
+    n_usable = sys.n_usable_holes()
+    summary = summarize_run(probe, config.m, n_usable, hole_statuses=sys.hole_status)
     return sys, summary
 
 
@@ -59,7 +59,7 @@ def _run_one(config: Config, hooks: Hooks | None = None) -> tuple[PigeonholeSyst
 # ============================================================================
 
 def experiment1(num_reps: int = 30, num_steps: int = 500, result_suffix: str = '', m: int = 10, n: int = 7) -> dict:
-    """How does increasing frozen holes affect overload and DG?"""
+    """How does increasing frozen holes affect overload and failure persistence?"""
     print(f'Experiment 1: Frozen hole robustness curve (m={m}, n={n}, reps={num_reps})')
     all_results = {}
 
@@ -73,8 +73,8 @@ def experiment1(num_reps: int = 30, num_steps: int = 500, result_suffix: str = '
             summaries.append(asdict(summary))
         all_results[label] = summaries
         avg_o = sum(s['final_overload'] for s in summaries) / num_reps
-        avg_dg = sum(s['delayed_gratification_events'] for s in summaries) / num_reps
-        print(f'  frozen={nf}  avg_overload={avg_o:.2f}  avg_DG={avg_dg:.2f}')
+        avg_retry = sum(s['post_failure_same_target_rate'] for s in summaries) / num_reps
+        print(f'  frozen={nf}  avg_overload={avg_o:.2f}  avg_same_retry={avg_retry:.2f}')
 
     _save('experiment1_frozen_robustness', all_results, result_suffix)
     return all_results
@@ -98,9 +98,9 @@ def experiment2(num_reps: int = 30, num_steps: int = 500, result_suffix: str = '
             summaries.append(asdict(summary))
         all_results[policy.name] = summaries
         avg_o = sum(s['final_overload'] for s in summaries) / num_reps
-        avg_dg = sum(s['dg_index'] for s in summaries) / num_reps
         avg_fail = sum(s['total_failed_placements'] for s in summaries) / num_reps
-        print(f'  {policy.name:15s}  avg_overload={avg_o:.2f}  avg_DG_idx={avg_dg:.2f}  avg_failed={avg_fail:.1f}')
+        avg_retry = sum(s['post_failure_same_target_rate'] for s in summaries) / num_reps
+        print(f'  {policy.name:15s}  avg_overload={avg_o:.2f}  avg_failed={avg_fail:.1f}  avg_same_retry={avg_retry:.2f}')
 
     _save('experiment2_policy_comparison', all_results, result_suffix)
     return all_results
@@ -230,8 +230,8 @@ def experiment6(num_reps: int = 30, num_steps: int = 500, result_suffix: str = '
         name, fn = make_hole_breaker(sys_tmp, break_step, target_hole)
         hooks.register(name, fn)
         sys_tmp.run()
-        n_active = sys_tmp.n_active_holes()
-        summary = summarize_run(sys_tmp.probe, m, n_active)
+        n_usable = sys_tmp.n_usable_holes()
+        summary = summarize_run(sys_tmp.probe, m, n_usable, hole_statuses=sys_tmp.hole_status)
         all_results['damage_only'].append(asdict(summary))
 
         # damage + heal
@@ -243,15 +243,15 @@ def experiment6(num_reps: int = 30, num_steps: int = 500, result_suffix: str = '
         hooks.register(name1, fn1)
         hooks.register(name2, fn2)
         sys_tmp.run()
-        n_active = sys_tmp.n_active_holes()
-        summary = summarize_run(sys_tmp.probe, m, n_active)
+        n_usable = sys_tmp.n_usable_holes()
+        summary = summarize_run(sys_tmp.probe, m, n_usable, hole_statuses=sys_tmp.hole_status)
         all_results['damage_and_heal'].append(asdict(summary))
 
     for cond in all_results:
         runs = all_results[cond]
         avg_o = sum(r['final_overload'] for r in runs) / num_reps
-        avg_dg = sum(r['dg_index'] for r in runs) / num_reps
-        print(f'  {cond:20s}  avg_overload={avg_o:.2f}  avg_DG_idx={avg_dg:.2f}')
+        avg_retry = sum(r['post_failure_same_target_rate'] for r in runs) / num_reps
+        print(f'  {cond:20s}  avg_overload={avg_o:.2f}  avg_same_retry={avg_retry:.2f}')
 
     _save('experiment6_recovery', all_results, result_suffix)
     return all_results
@@ -276,7 +276,12 @@ def experiment7(num_reps: int = 30, num_steps: int = 500, result_suffix: str = '
             name, fn = make_hole_breaker(sys_tmp, 100, i)
             hooks.register(name, fn)
         sys_tmp.run()
-        summary = summarize_run(sys_tmp.probe, m, sys_tmp.n_active_holes())
+        summary = summarize_run(
+            sys_tmp.probe,
+            m,
+            sys_tmp.n_usable_holes(),
+            hole_statuses=sys_tmp.hole_status,
+        )
         all_results['sudden'].append(asdict(summary))
 
         # gradual: freeze one hole every 100 steps
@@ -287,14 +292,19 @@ def experiment7(num_reps: int = 30, num_steps: int = 500, result_suffix: str = '
                                            interval=100, max_frozen=max_frozen)
         hooks.register(name, fn)
         sys_tmp.run()
-        summary = summarize_run(sys_tmp.probe, m, sys_tmp.n_active_holes())
+        summary = summarize_run(
+            sys_tmp.probe,
+            m,
+            sys_tmp.n_usable_holes(),
+            hole_statuses=sys_tmp.hole_status,
+        )
         all_results['gradual'].append(asdict(summary))
 
     for cond in all_results:
         runs = all_results[cond]
         avg_o = sum(r['final_overload'] for r in runs) / num_reps
-        avg_dg = sum(r['dg_index'] for r in runs) / num_reps
-        print(f'  {cond:10s}  avg_overload={avg_o:.2f}  avg_DG_idx={avg_dg:.2f}')
+        avg_retry = sum(r['post_failure_same_target_rate'] for r in runs) / num_reps
+        print(f'  {cond:10s}  avg_overload={avg_o:.2f}  avg_same_retry={avg_retry:.2f}')
 
     _save('experiment7_progressive_damage', all_results, result_suffix)
     return all_results
@@ -319,8 +329,8 @@ def experiment8(num_reps: int = 30, num_steps: int = 500, result_suffix: str = '
             summaries.append(asdict(summary))
         all_results[label] = summaries
         avg_o = sum(s['final_overload'] for s in summaries) / num_reps
-        avg_max = sum(s['final_max_load'] for s in summaries) / num_reps
-        print(f'  misleading={nm}  avg_overload={avg_o:.2f}  avg_max_load={avg_max:.2f}')
+        avg_bias = sum(s['misleading_occupancy_bias'] for s in summaries) / num_reps
+        print(f'  misleading={nm}  avg_overload={avg_o:.2f}  avg_occ_bias={avg_bias:.2f}')
 
     _save('experiment8_misleading_holes', all_results, result_suffix)
     return all_results

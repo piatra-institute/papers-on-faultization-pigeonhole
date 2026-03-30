@@ -2,11 +2,12 @@
 Faultized Pigeonhole — Metrics
 
 Statistical metrics for analyzing pigeonhole dynamics.
-Parallel to the sorting paper's metrics (sortedness, monotonicity error,
-delayed gratification, aggregation) adapted for placement problems.
+Parallel to the sorting paper's metrics, but extended with probes for
+learning-like failure response and fault-induced substrate bias.
 """
 from __future__ import annotations
 
+from collections import defaultdict
 import numpy as np
 from dataclasses import dataclass
 
@@ -42,14 +43,31 @@ class RunSummary:
     dg_index: float                # magnitude-weighted DG score
     total_failed_placements: int   # moves rejected by frozen holes
 
+    # learning-like failure response
+    post_failure_same_target_rate: float   # retry the same failed hole next attempt
+    post_failure_repeat_failure_rate: float  # next attempt also fails
+    post_failure_opportunities: int
 
-def summarize_run(probe: Any, m: int, n_active: int) -> RunSummary:
+    # fault-induced bias
+    misleading_occupancy_share: float
+    misleading_occupancy_bias: float
+    misleading_overload_share: float
+    misleading_overload_bias: float
+    misleading_load_gap: float
+
+
+def summarize_run(
+    probe: Any,
+    m: int,
+    n_usable: int,
+    hole_statuses: Any | None = None,
+) -> RunSummary:
     """Compute summary from a Probe."""
     overloads = probe.overloads
     potentials = probe.potentials
 
     if not overloads:
-        theo = max(0, m - n_active)
+        theo = max(0, m - n_usable)
         return RunSummary(
             final_overload=0, min_overload=0,
             theoretical_min_overload=theo, overload_ratio=0.0,
@@ -59,10 +77,18 @@ def summarize_run(probe: Any, m: int, n_active: int) -> RunSummary:
             steps_to_min_overload=0, convergence_step=0,
             delayed_gratification_events=0, dg_index=0.0,
             total_failed_placements=0,
+            post_failure_same_target_rate=0.0,
+            post_failure_repeat_failure_rate=0.0,
+            post_failure_opportunities=0,
+            misleading_occupancy_share=0.0,
+            misleading_occupancy_bias=0.0,
+            misleading_overload_share=0.0,
+            misleading_overload_bias=0.0,
+            misleading_load_gap=0.0,
         )
 
     min_overload = min(overloads)
-    theo = max(0, m - n_active)
+    theo = max(0, m - n_usable)
     ratio = overloads[-1] / theo if theo > 0 else (1.0 if overloads[-1] == 0 else float('inf'))
 
     # delayed gratification
@@ -76,10 +102,14 @@ def summarize_run(probe: Any, m: int, n_active: int) -> RunSummary:
 
     # failed placements
     failed = sum(1 for _, _, _, _, success in probe.moves if not success)
+    same_target_rate, repeat_failure_rate, opportunities = compute_post_failure_persistence(probe.moves)
 
     # load balance at end
     final_loads = probe.load_snapshots[-1] if probe.load_snapshots else np.zeros(1)
     load_std = float(np.std(final_loads))
+    occ_share, occ_bias, overload_share, overload_bias, load_gap = compute_misleading_bias(
+        final_loads, hole_statuses
+    )
 
     return RunSummary(
         final_overload=overloads[-1],
@@ -96,6 +126,14 @@ def summarize_run(probe: Any, m: int, n_active: int) -> RunSummary:
         delayed_gratification_events=dg_events,
         dg_index=dg_idx,
         total_failed_placements=failed,
+        post_failure_same_target_rate=same_target_rate,
+        post_failure_repeat_failure_rate=repeat_failure_rate,
+        post_failure_opportunities=opportunities,
+        misleading_occupancy_share=occ_share,
+        misleading_occupancy_bias=occ_bias,
+        misleading_overload_share=overload_share,
+        misleading_overload_bias=overload_bias,
+        misleading_load_gap=load_gap,
     )
 
 
@@ -135,6 +173,93 @@ def compute_delayed_gratification(overloads: list[int]) -> tuple[int, float]:
 
     dg_index = total_gain / max(events, 1)
     return events, dg_index
+
+
+def compute_post_failure_persistence(
+    moves: list[tuple[int, int, int, int, bool]],
+) -> tuple[float, float, int]:
+    """Quantify whether pigeons persist on faulty substrate after rejection.
+
+    We look only at pigeons that make another placement attempt after a failure.
+    The resulting rates are therefore "next attempted move" rates, not
+    next-activation rates.
+    """
+    by_pigeon: dict[int, list[tuple[int, bool]]] = defaultdict(list)
+    for _, pigeon_id, _, target_hole, success in moves:
+        by_pigeon[pigeon_id].append((target_hole, success))
+
+    same_target_retries = 0
+    repeat_failures = 0
+    opportunities = 0
+
+    for history in by_pigeon.values():
+        for idx, (target_hole, success) in enumerate(history[:-1]):
+            if success:
+                continue
+            opportunities += 1
+            next_target, next_success = history[idx + 1]
+            if next_target == target_hole:
+                same_target_retries += 1
+            if not next_success:
+                repeat_failures += 1
+
+    if opportunities == 0:
+        return 0.0, 0.0, 0
+
+    return (
+        same_target_retries / opportunities,
+        repeat_failures / opportunities,
+        opportunities,
+    )
+
+
+def compute_misleading_bias(
+    loads: np.ndarray,
+    hole_statuses: Any | None,
+) -> tuple[float, float, float, float, float]:
+    """Measure whether misleading holes disproportionately attract load.
+
+    Returns:
+        occupancy_share: fraction of pigeons on misleading holes
+        occupancy_bias: occupancy_share - fraction_of_misleading_holes
+        overload_share: fraction of overload concentrated on misleading holes
+        overload_bias: overload_share - fraction_of_misleading_holes
+        load_gap: mean misleading-hole load minus mean honest-hole load
+    """
+    if hole_statuses is None:
+        return 0.0, 0.0, 0.0, 0.0, 0.0
+
+    statuses = list(hole_statuses)
+    if not statuses:
+        return 0.0, 0.0, 0.0, 0.0, 0.0
+
+    def status_name(status: Any) -> str:
+        return getattr(status, 'name', str(status))
+
+    misleading_ids = [i for i, status in enumerate(statuses) if status_name(status) == 'MISLEADING']
+    if not misleading_ids:
+        return 0.0, 0.0, 0.0, 0.0, 0.0
+
+    honest_ids = [i for i, status in enumerate(statuses) if status_name(status) != 'MISLEADING']
+    hole_fraction = len(misleading_ids) / len(statuses)
+
+    total_load = float(np.sum(loads))
+    occupancy_share = float(np.sum(loads[misleading_ids]) / total_load) if total_load > 0 else 0.0
+    occupancy_bias = occupancy_share - hole_fraction
+
+    excess = np.maximum(loads - 1, 0)
+    total_excess = float(np.sum(excess))
+    overload_share = (
+        float(np.sum(excess[misleading_ids]) / total_excess)
+        if total_excess > 0 else 0.0
+    )
+    overload_bias = overload_share - hole_fraction if total_excess > 0 else 0.0
+
+    misleading_mean = float(np.mean(loads[misleading_ids])) if misleading_ids else 0.0
+    honest_mean = float(np.mean(loads[honest_ids])) if honest_ids else 0.0
+    load_gap = misleading_mean - honest_mean
+
+    return occupancy_share, occupancy_bias, overload_share, overload_bias, load_gap
 
 
 def robustness_curve(summaries_by_damage: dict[int, list[RunSummary]]) -> dict[int, dict]:

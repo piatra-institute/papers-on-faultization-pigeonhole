@@ -92,6 +92,8 @@ def independent_ttest(
     Returns (t_stat, p_value, mean_diff, cohen_d).
     """
     a_arr, b_arr = np.array(a, dtype=float), np.array(b, dtype=float)
+    if np.allclose(a_arr, b_arr) and np.std(a_arr) < 1e-15 and np.std(b_arr) < 1e-15:
+        return 0.0, 1.0, 0.0, 0.0
     t_stat, p_value = stats.ttest_ind(a_arr, b_arr, equal_var=False)
     d = cohens_d(a, b)
     return float(t_stat), float(p_value), float(np.mean(a_arr) - np.mean(b_arr)), d
@@ -129,7 +131,7 @@ def print_comparison(
 # ============================================================================
 
 def analyze_exp1() -> None:
-    """Analyze how frozen holes affect overload and DG."""
+    """Analyze how frozen holes affect overload and failure persistence."""
     print("=" * 70)
     print("EXPERIMENT 1: Frozen Hole Robustness Curve -- Paired t-tests (n=30)")
     print("=" * 70)
@@ -141,7 +143,6 @@ def analyze_exp1() -> None:
     bl = data[baseline_key]
     bl_overload = extract_metric(bl, 'final_overload')
     bl_ratio = extract_metric(bl, 'overload_ratio')
-    bl_dg = extract_metric(bl, 'dg_index')
 
     print(f"\nBaseline (frozen_0): overload={np.mean(bl_overload):.4f}+/-{np.std(bl_overload, ddof=1):.4f}, "
           f"ratio={np.mean(bl_ratio):.4f}, n={len(bl)}")
@@ -161,10 +162,12 @@ def analyze_exp1() -> None:
         cond_overload = extract_metric(data[key], 'final_overload')
         print_comparison(key, bl_overload, cond_overload)
 
-    print("\n--- DG Index vs Baseline (paired) ---")
+    print("\n--- Failure Persistence By Damage Level ---")
     for key in condition_keys:
-        cond_dg = extract_metric(data[key], 'dg_index')
-        print_comparison(key, bl_dg, cond_dg)
+        retry = extract_metric(data[key], 'post_failure_same_target_rate')
+        repeat_fail = extract_metric(data[key], 'post_failure_repeat_failure_rate')
+        print(f"  {key:20s}: same_target={np.mean(retry):.4f} "
+              f"repeat_fail={np.mean(repeat_fail):.4f}")
 
     # Monotonicity: Spearman correlation of frozen level vs overload
     print("\n--- Monotonicity (Spearman rank correlation) ---")
@@ -195,11 +198,12 @@ def analyze_exp2() -> None:
     baseline_name = 'GREEDY'
     bl = data[baseline_name]
     bl_overload = extract_metric(bl, 'final_overload')
-    bl_dg = extract_metric(bl, 'dg_index')
     bl_failed = extract_metric(bl, 'total_failed_placements')
+    bl_retry = extract_metric(bl, 'post_failure_same_target_rate')
+    bl_repeat_fail = extract_metric(bl, 'post_failure_repeat_failure_rate')
 
     print(f"\nBaseline ({baseline_name}): overload={np.mean(bl_overload):.4f}+/-{np.std(bl_overload, ddof=1):.4f}, "
-          f"dg_index={np.mean(bl_dg):.4f}, n={len(bl)}")
+          f"same_target_retry={np.mean(bl_retry):.4f}, n={len(bl)}")
 
     condition_names = [k for k in data if k != baseline_name]
 
@@ -208,10 +212,15 @@ def analyze_exp2() -> None:
         cond = extract_metric(data[name], 'final_overload')
         print_comparison(name, bl_overload, cond)
 
-    print("\n--- DG Index vs GREEDY (paired) ---")
+    print("\n--- Same-Target Retry vs GREEDY (paired) ---")
     for name in condition_names:
-        cond = extract_metric(data[name], 'dg_index')
-        print_comparison(name, bl_dg, cond)
+        cond = extract_metric(data[name], 'post_failure_same_target_rate')
+        print_comparison(name, bl_retry, cond)
+
+    print("\n--- Repeat Failure vs GREEDY (paired) ---")
+    for name in condition_names:
+        cond = extract_metric(data[name], 'post_failure_repeat_failure_rate')
+        print_comparison(name, bl_repeat_fail, cond)
 
     print("\n--- Failed Placements vs GREEDY (paired) ---")
     for name in condition_names:
@@ -341,8 +350,8 @@ def analyze_exp5() -> None:
     pairs = list(data.keys())
 
     print(f"\n  {'Pair':30s} {'Overload':>10s} {'Ovl Std':>8s} "
-          f"{'Aggreg':>8s} {'Agg Std':>8s} {'DG Idx':>8s}")
-    print("  " + "-" * 75)
+          f"{'Aggreg':>8s} {'Agg Std':>8s}")
+    print("  " + "-" * 66)
 
     for pair in pairs:
         entry = data[pair]
@@ -350,11 +359,8 @@ def analyze_exp5() -> None:
         aggregations = entry['aggregations']
 
         ovl = extract_metric(summaries, 'final_overload')
-        dg = extract_metric(summaries, 'dg_index')
-
         print(f"  {pair:30s} {np.mean(ovl):10.4f} {np.std(ovl, ddof=1):8.4f} "
-              f"{np.mean(aggregations):8.4f} {np.std(aggregations, ddof=1):8.4f} "
-              f"{np.mean(dg):8.4f}")
+              f"{np.mean(aggregations):8.4f} {np.std(aggregations, ddof=1):8.4f}")
 
     # Compare all pairs pairwise on overload
     print("\n--- Pairwise overload comparisons (independent t-test) ---")
@@ -385,7 +391,6 @@ def analyze_exp6() -> None:
     healed = data['damage_and_heal']
 
     ctrl_overload = extract_metric(ctrl, 'final_overload')
-    ctrl_dg = extract_metric(ctrl, 'dg_index')
 
     print(f"\nn={len(ctrl)}")
     print(f"  Control:        overload={np.mean(ctrl_overload):.4f}+/-{np.std(ctrl_overload, ddof=1):.4f}")
@@ -396,11 +401,12 @@ def analyze_exp6() -> None:
     print_comparison('damage_and_heal', ctrl_overload,
                      extract_metric(healed, 'final_overload'))
 
-    print("\n--- DG Index vs Control (paired) ---")
-    print_comparison('damage_only', ctrl_dg,
-                     extract_metric(damage, 'dg_index'))
-    print_comparison('damage_and_heal', ctrl_dg,
-                     extract_metric(healed, 'dg_index'))
+    print("\n--- Failure Persistence ---")
+    for cond_name in ['damage_only', 'damage_and_heal']:
+        retry = extract_metric(data[cond_name], 'post_failure_same_target_rate')
+        repeat_fail = extract_metric(data[cond_name], 'post_failure_repeat_failure_rate')
+        print(f"  {cond_name:20s}: same_target={np.mean(retry):.4f} "
+              f"repeat_fail={np.mean(repeat_fail):.4f}")
 
     # Does healing recover to control levels?
     print("\n--- Healing vs Damage Only (paired) ---")
@@ -433,8 +439,6 @@ def analyze_exp7() -> None:
 
     sudden_overload = extract_metric(sudden, 'final_overload')
     gradual_overload = extract_metric(gradual, 'final_overload')
-    sudden_dg = extract_metric(sudden, 'dg_index')
-    gradual_dg = extract_metric(gradual, 'dg_index')
 
     print(f"\nn={len(sudden)}")
     print(f"  Sudden:  overload={np.mean(sudden_overload):.4f}+/-{np.std(sudden_overload, ddof=1):.4f}")
@@ -442,7 +446,6 @@ def analyze_exp7() -> None:
 
     print("\n--- Gradual vs Sudden (paired) ---")
     print_comparison('gradual vs sudden (overload)', sudden_overload, gradual_overload)
-    print_comparison('gradual vs sudden (DG)', sudden_dg, gradual_dg)
 
     # Convergence
     sudden_conv = extract_metric(sudden, 'convergence_step')
@@ -453,6 +456,14 @@ def analyze_exp7() -> None:
     sudden_fail = extract_metric(sudden, 'total_failed_placements')
     gradual_fail = extract_metric(gradual, 'total_failed_placements')
     print_comparison('gradual vs sudden (failed)', sudden_fail, gradual_fail)
+
+    # Failure persistence
+    sudden_retry = extract_metric(sudden, 'post_failure_same_target_rate')
+    gradual_retry = extract_metric(gradual, 'post_failure_same_target_rate')
+    sudden_repeat = extract_metric(sudden, 'post_failure_repeat_failure_rate')
+    gradual_repeat = extract_metric(gradual, 'post_failure_repeat_failure_rate')
+    print_comparison('gradual vs sudden (same target)', sudden_retry, gradual_retry)
+    print_comparison('gradual vs sudden (repeat fail)', sudden_repeat, gradual_repeat)
 
 
 # ============================================================================
@@ -473,6 +484,9 @@ def analyze_exp8() -> None:
     bl_overload = extract_metric(bl, 'final_overload')
     bl_ratio = extract_metric(bl, 'overload_ratio')
     bl_max = extract_metric(bl, 'final_max_load')
+    bl_occ_bias = extract_metric(bl, 'misleading_occupancy_bias')
+    bl_overload_bias = extract_metric(bl, 'misleading_overload_bias')
+    bl_load_gap = extract_metric(bl, 'misleading_load_gap')
 
     print(f"\nBaseline (misleading_0): overload={np.mean(bl_overload):.4f}+/-{np.std(bl_overload, ddof=1):.4f}, "
           f"n={len(bl)}")
@@ -496,6 +510,21 @@ def analyze_exp8() -> None:
     for key in condition_keys:
         cond = extract_metric(data[key], 'final_max_load')
         print_comparison(key, bl_max, cond)
+
+    print("\n--- Occupancy Bias vs Baseline (paired) ---")
+    for key in condition_keys:
+        cond = extract_metric(data[key], 'misleading_occupancy_bias')
+        print_comparison(key, bl_occ_bias, cond)
+
+    print("\n--- Overload Bias vs Baseline (paired) ---")
+    for key in condition_keys:
+        cond = extract_metric(data[key], 'misleading_overload_bias')
+        print_comparison(key, bl_overload_bias, cond)
+
+    print("\n--- Load Gap vs Baseline (paired) ---")
+    for key in condition_keys:
+        cond = extract_metric(data[key], 'misleading_load_gap')
+        print_comparison(key, bl_load_gap, cond)
 
     # Monotonicity
     print("\n--- Monotonicity (Spearman: n_misleading vs overload) ---")
@@ -540,15 +569,15 @@ def summary_table() -> None:
     # Exp 2: Policy comparison
     try:
         data = load_results('experiment2_policy_comparison')
-        bl = extract_metric(data['GREEDY'], 'final_overload')
+        bl = extract_metric(data['GREEDY'], 'post_failure_same_target_rate')
         for name in [k for k in data if k != 'GREEDY']:
-            vals = extract_metric(data[name], 'final_overload')
+            vals = extract_metric(data[name], 'post_failure_same_target_rate')
             t, p, md, se, d = paired_ttest(bl, vals)
             pct = md / np.mean(bl) * 100 if abs(np.mean(bl)) > 1e-15 else 0.0
-            print(f"{'2: Policy Comparison':35s} {name:25s} "
+            print(f"{'2: Policy Persistence':35s} {name:25s} "
                   f"{np.mean(vals):7.4f} {pct:+5.1f}% {p:8.4f} {sig_marker(p):>4s}")
     except FileNotFoundError:
-        print(f"{'2: Policy Comparison':35s} -- no results file --")
+        print(f"{'2: Policy Persistence':35s} -- no results file --")
 
     # Exp 3: Noisy perception
     try:
@@ -627,6 +656,15 @@ def summary_table() -> None:
             pct = md / np.mean(bl) * 100 if abs(np.mean(bl)) > 1e-15 else 0.0
             print(f"{'8: Misleading Holes':35s} {key:25s} "
                   f"{np.mean(vals):7.4f} {pct:+5.1f}% {p:8.4f} {sig_marker(p):>4s}")
+
+        bl_bias = extract_metric(data['misleading_0'], 'misleading_occupancy_bias')
+        for key in sorted([k for k in data if k != 'misleading_0'],
+                          key=lambda x: int(x.split('_')[-1])):
+            vals = extract_metric(data[key], 'misleading_occupancy_bias')
+            t, p, md, se, d = paired_ttest(bl_bias, vals)
+            pct = md * 100
+            print(f"{'8: Occupancy Bias':35s} {key:25s} "
+                  f"{np.mean(vals):7.4f} {pct:+5.1f}pp {p:8.4f} {sig_marker(p):>4s}")
     except FileNotFoundError:
         print(f"{'8: Misleading Holes':35s} -- no results file --")
 
