@@ -2,8 +2,8 @@
 Faultized Pigeonhole — Metrics
 
 Statistical metrics for analyzing pigeonhole dynamics.
-Parallel to the sorting paper's metrics, but extended with probes for
-learning-like failure response and fault-induced substrate bias.
+Measures pattern manifestation, fidelity, and corruption under faultization,
+extended with probes for failure response and substrate bias.
 """
 from __future__ import annotations
 

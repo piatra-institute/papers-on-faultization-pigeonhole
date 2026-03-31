@@ -4,18 +4,20 @@ Morphogenetic perturbation of the pigeonhole principle, applying Levin et al.'s 
 
 ## Overview
 
-The classical pigeonhole principle states that if m > n pigeons are placed into n holes, at least one hole must contain more than one pigeon. We reinterpret this impossibility theorem as a dynamical system: each pigeon is an autonomous agent with a local policy, each hole is a stateful resource, and the system self-organizes around the irreducible constraint (overload >= m - n).
+The classical pigeonhole principle states that if m > n pigeons are placed into n holes, at least one hole must contain more than one pigeon. Under the Platonic Space framing (Levin, 2026), we treat the pigeonhole principle not as a rule the agents compute but as a pattern they channel from the latent mathematical structure: the optimal allocation (O_min = m-n) exists in the space of mathematical truths, and the agent-substrate system serves as an interface through which that pattern manifests.
 
-Eight experiments systematically perturb the system -- freezing holes, corrupting perception, restricting visibility, mixing policies, damaging and healing substrate -- to reveal emergent competencies, retry persistence, and fault-induced bias not prescribed by the local rules.
+Each pigeon is an autonomous agent with a local policy, each hole is a stateful resource, and the system self-organizes around the irreducible constraint -- not because any agent knows the global optimum, but because the pattern is robustly accessible through the local interface.
+
+Eight experiments systematically perturb this interface -- narrowing bandwidth (frozen holes), blurring the sensory channel (noise), restricting information geometry (view radius), diversifying the interface type (policy mixtures), breaking and restoring it (recovery), and actively corrupting it (misleading holes) -- to probe the conditions under which the pigeonhole pattern manifests, degrades, or inverts.
 
 ## Key Findings
 
-- **Complete optimization**: Local policies reach theoretical minimum overload in 6 of 8 experiments
-- **Policy indifference with process divergence**: All four policies achieve identical outcomes but differ dramatically in process (failed placements vary by 5x, same-target retry from 0.46 to 1.00)
-- **No noise buffer**: Unlike transformer training, perceptual noise causes immediate monotonic degradation
-- **No convincing agent-level learning**: Rejected pigeons often retry faulty substrate instead of learning to avoid it
-- **Deceptive substrate induces bias**: A single misleading hole attracts 36% of pigeons and 66% of overload while raising overload by 25.6%
-- **Complete recovery**: The collective state re-optimizes after damage and healing even though retry persistence remains non-zero
+- **Pattern manifestation (free lunch)**: The pigeonhole pattern manifests fully in 6 of 8 experiments -- the system receives optimal allocation without computing it
+- **Pattern plurality**: All four policies channel the same pattern with identical fidelity, but differ dramatically in process cost (failed placements vary by 5x, same-target retry from 0.46 to 1.00)
+- **Pattern fidelity (discrete)**: Unlike transformer training, perceptual noise causes immediate monotonic degradation -- the interface tolerates zero corruption
+- **No convincing agent-level learning**: Rejected pigeons often retry faulty substrate instead of learning to avoid it; the system is pattern-driven, not memory-driven
+- **Pattern corruption**: A single misleading hole inverts the pattern, attracting 36% of pigeons and 66% of overload while raising overload by 25.6%
+- **Bidirectional interface**: The collective state re-accesses the pattern after damage and healing with no hysteresis
 
 ## Quick Start
 
@@ -63,5 +65,7 @@ on-faultization-pigeonhole/
 - [Experiments](docs/EXPERIMENTS.md) -- Concise experiment summary
 
 ## References
+
+Levin, M. (2026). The Platonic Space framework for morphogenetic competency.
 
 Levin, M., Bongard, J., & Bhatt, R. (2024). Morphogenetic competencies of sorting algorithms. arXiv:2401.05375.

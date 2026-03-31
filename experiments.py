@@ -1,16 +1,16 @@
 """
 Faultized Pigeonhole — Experiments
 
-Systematic experiments matching the sorting paper / morphogpt structure:
+Faultization experiments probing pattern access under the pigeonhole constraint:
 
-1. Frozen hole robustness curve
-2. Policy comparison (cell-view equivalent)
-3. Noisy perception (gradient degradation equivalent)
-4. View radius sweep (vision radius equivalent)
-5. Chimeric policies (mixed Algotype equivalent)
-6. Dynamic damage — recovery after hole breaks
-7. Progressive damage — stress inoculation equivalent
-8. Misleading holes — deceptive substrate
+1. Frozen hole robustness — pattern bandwidth
+2. Policy comparison — pattern plurality
+3. Noisy perception — pattern fidelity (discrete)
+4. View radius sweep — information geometry
+5. Chimeric policies — lateral pattern resonance
+6. Dynamic damage / recovery — bidirectional interface
+7. Progressive vs sudden damage — memoryless pattern-driven
+8. Misleading holes — pattern corruption
 """
 from __future__ import annotations
 

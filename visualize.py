@@ -1,7 +1,7 @@
 # /// script
 # dependencies = ["matplotlib", "numpy"]
 # ///
-"""Visualization functions for pigeonhole morphogenetic experiments."""
+"""Visualization functions for pigeonhole faultization experiments."""
 from __future__ import annotations
 
 import json
@@ -38,7 +38,7 @@ def plot_robustness_curve(results: dict[str, list[dict]], path: str | Path) -> N
     ax.errorbar(levels, means, yerr=stds, marker='o', capsize=4, linewidth=2)
     ax.set_xlabel('Number of Frozen Holes')
     ax.set_ylabel('Overload Ratio (final / theoretical min)')
-    ax.set_title('Robustness Curve: Frozen Hole Damage')
+    ax.set_title('Pattern Bandwidth: Frozen Hole Robustness')
     ax.axhline(y=1.0, color='gray', linestyle='--', alpha=0.5, label='Optimal')
     ax.legend()
     ax.grid(True, alpha=0.3)
@@ -98,7 +98,7 @@ def plot_noise_tolerance(results: dict[str, list[dict]], path: str | Path) -> No
                 color='tab:orange')
     ax.set_xlabel('Noise Standard Deviation')
     ax.set_ylabel('Overload Ratio')
-    ax.set_title('Noise Tolerance Curve')
+    ax.set_title('Pattern Fidelity: Noise Degradation')
     ax.axhline(y=1.0, color='gray', linestyle='--', alpha=0.5)
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
@@ -173,7 +173,7 @@ def plot_recovery_dynamics(results: dict[str, list[dict]], path: str | Path) -> 
 
     ax.set_xlabel('Final Overload')
     ax.set_ylabel('Count')
-    ax.set_title('Recovery After Damage: Final Overload Distribution')
+    ax.set_title('Bidirectional Interface: Recovery Overload Distribution')
     ax.legend()
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
@@ -198,7 +198,7 @@ def plot_progressive_vs_sudden(results: dict[str, list[dict]], path: str | Path)
 
     ax.set_xlabel('Final Overload')
     ax.set_ylabel('Count')
-    ax.set_title('Progressive vs. Sudden Damage')
+    ax.set_title('Pattern-Driven Dynamics: Progressive vs. Sudden')
     ax.legend()
     ax.grid(True, alpha=0.3)
     fig.tight_layout()
@@ -238,14 +238,14 @@ def plot_chimeric_aggregation(results: dict[str, dict], path: str | Path) -> Non
     ax1.set_xticks(x)
     ax1.set_xticklabels(pairs, rotation=30, ha='right')
     ax1.set_ylabel('Overload Ratio')
-    ax1.set_title('Chimeric Populations: Overload')
+    ax1.set_title('Lateral Pattern Resonance: Overload')
     ax1.grid(True, alpha=0.3, axis='y')
 
     ax2.bar(x, agg_means, yerr=agg_stds, capsize=4, alpha=0.8, color='tab:orange')
     ax2.set_xticks(x)
     ax2.set_xticklabels(pairs, rotation=30, ha='right')
     ax2.set_ylabel('Policy Aggregation Score')
-    ax2.set_title('Chimeric Populations: Aggregation')
+    ax2.set_title('Lateral Pattern Resonance: Aggregation')
     ax2.grid(True, alpha=0.3, axis='y')
     fig.tight_layout()
     fig.savefig(path, dpi=150)
@@ -278,14 +278,14 @@ def plot_misleading_tolerance(results: dict[str, list[dict]], path: str | Path) 
                  capsize=4, linewidth=2, color='tab:purple')
     ax1.set_xlabel('Number of Misleading Holes')
     ax1.set_ylabel('Final Overload')
-    ax1.set_title('Misleading Holes: Overload')
+    ax1.set_title('Pattern Corruption: Overload')
     ax1.grid(True, alpha=0.3)
 
     ax2.errorbar(levels, bias_means, yerr=bias_stds, marker='o', capsize=4,
                  linewidth=2, color='tab:red')
     ax2.set_xlabel('Number of Misleading Holes')
     ax2.set_ylabel('Occupancy Bias')
-    ax2.set_title('Misleading Holes: Occupancy Bias')
+    ax2.set_title('Pattern Corruption: Occupancy Bias')
     ax2.axhline(y=0.0, color='gray', linestyle='--', alpha=0.5)
     ax2.grid(True, alpha=0.3)
     fig.tight_layout()

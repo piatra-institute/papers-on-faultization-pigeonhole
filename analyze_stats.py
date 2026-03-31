@@ -2,11 +2,11 @@
 # dependencies = ["numpy", "scipy"]
 # ///
 """
-Paired statistical analysis of all pigeonhole experiments (n=30).
+Paired statistical analysis of all pigeonhole faultization experiments (n=30).
 
 Uses paired t-tests (matching seeds across conditions) and independent
-t-tests where appropriate. Follows the same pattern as the MorphoGPT
-analyze_stats.py.
+t-tests where appropriate. Analyzes pattern manifestation, fidelity, and
+corruption under systematic perturbation.
 
 Usage:
     uv run --script analyze_stats.py            # Analyze all experiments

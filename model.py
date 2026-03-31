@@ -5,11 +5,11 @@ m pigeons, n holes (m > n). Each pigeon is an autonomous agent with a local
 policy for choosing a hole. Holes can be frozen (damaged). The system
 self-organizes around the unavoidable overload O >= m - n.
 
-Analogous to Zhang, Goldstein & Levin (2024) sorting paper and MorphoGPT:
-break top-down control, allow unreliable substrate, look for emergent
-competencies not specified by the algorithm.
+Applies Levin's faultization methodology: systematically perturb the interface
+between local policies and the pigeonhole pattern (O_min = m - n) to reveal
+what patterns from the latent space the system accesses (Levin, 2026).
 
-Flat-file layout matching morphogpt conventions. No packages, just scripts.
+Flat-file layout matching faultization conventions. No packages, just scripts.
 """
 from __future__ import annotations
 

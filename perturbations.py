@@ -1,16 +1,15 @@
 """
 Faultized Pigeonhole — Perturbations
 
-Hook-based perturbations for the pigeonhole system. Same pattern as
-morphogpt perturbations_np.py: each perturbation returns (hook_name, hook_fn)
-or registers directly on a Hooks instance.
+Hook-based perturbations for the pigeonhole system. Each perturbation
+returns (hook_name, hook_fn) or registers directly on a Hooks instance.
 
-Perturbation categories (matching the sorting paper / morphogpt):
-  A. Damaged substrate  — frozen holes, misleading holes
-  B. Noisy perception   — pigeons see wrong loads
-  C. Policy damage      — pigeons sometimes ignore their own policy
-  D. Dynamic damage     — holes break/heal mid-run
-  E. Chimeric policies  — mixed policy populations
+Perturbation categories (Platonic Space / faultization framing):
+  A. Interface degradation  — frozen holes, misleading holes
+  B. Perceptual corruption  — pigeons see wrong loads
+  C. Policy corruption      — pigeons sometimes ignore their own policy
+  D. Dynamic interface      — holes break/heal mid-run
+  E. Chimeric interfaces    — mixed policy populations
 """
 from __future__ import annotations
 

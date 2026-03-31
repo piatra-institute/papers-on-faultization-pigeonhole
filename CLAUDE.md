@@ -45,11 +45,11 @@ uv run --script visualize.py             # Generate all plots
 
 ## Experiments
 
-1. Frozen hole robustness curve
-2. Policy comparison (GREEDY, EXPLORATORY, REPULSIVE, COOPERATIVE)
-3. Noisy perception (Gaussian noise on reported loads)
-4. View radius sweep (pigeon visibility range)
-5. Chimeric policies (mixed-policy populations)
-6. Recovery after damage (freeze then heal)
-7. Progressive vs sudden damage (stress inoculation)
-8. Misleading holes (deceptive substrate)
+1. Frozen hole robustness curve -- Pattern bandwidth / Free lunch
+2. Policy comparison (GREEDY, EXPLORATORY, REPULSIVE, COOPERATIVE) -- Pattern plurality / Free lunch
+3. Noisy perception (Gaussian noise on reported loads) -- Pattern fidelity (discrete)
+4. View radius sweep (pigeon visibility range) -- Information geometry / Free lunch
+5. Chimeric policies (mixed-policy populations) -- Lateral pattern resonance
+6. Recovery after damage (freeze then heal) -- Bidirectional interface / Free lunch
+7. Progressive vs sudden damage (stress inoculation) -- Memoryless = pattern-driven
+8. Misleading holes (deceptive substrate) -- Pattern corruption / inversion

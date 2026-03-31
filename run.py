@@ -91,7 +91,7 @@ def _run_all(num_reps: int, num_steps: int, result_suffix: str) -> None:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Faultized Pigeonhole: Morphogenetic perturbation experiments on a pigeonhole system.'
+        description='Faultized Pigeonhole: Probing pattern access under irreducible constraint.'
     )
     sub = parser.add_subparsers(dest='command', help='Command to run')
 
