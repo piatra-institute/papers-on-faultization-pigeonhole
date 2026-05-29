@@ -510,7 +510,7 @@ Aguilera, M. K., Chen, W., and Toueg, S. (2004). Failure detection and consensus
 
 Azar, Y., Broder, A. Z., Karlin, A. R., and Upfal, E. (1999). Balanced allocations. *SIAM Journal on Computing*, 29(1), 180--200.
 
-Kofman, D., Bhatt, U., and Levin, M. (2025). Morphogenetic perturbation of training: probing transformer competencies beyond the nominal loss landscape. *arXiv preprint* arXiv:2503.XXXXX.
+Kofman, D., Bhatt, U., and Levin, M. (2025). Morphogenetic perturbation of training: probing transformer competencies beyond the nominal loss landscape. Preprint.
 
 Lamport, L., Shostak, R., and Pease, M. (1982). The Byzantine generals problem. *ACM Transactions on Programming Languages and Systems*, 4(3), 382--401.
 
