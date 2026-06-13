@@ -2,6 +2,16 @@
 
 Dated log of editorial passes and verification runs. Newest first.
 
+## 2026-06-13 — voice reform
+
+Voice-reform pass to remove AI-writing tells, per `tooling/docs/voice.md`. No numbers, equations, table values, or citations changed.
+
+- Reduced voice review-candidates 19 → 6 (0 errors throughout). Thinned the dominant "pattern-channeling, not learning" / "the pattern, not the policy" inline-contrastive tic across the abstract, Results (Exp 1, 6, 7), and Discussion (5.4, 5.6) by rewriting as positive declaratives ("the pattern channels the convergence; agent-level learning does not", "the pattern determines the outcome; the policy merely accesses it", "the interface itself, rather than the pattern, sets the fidelity requirement"). Rewrote "discovered, not created" framing in the introduction with "rather than".
+- Density: deleted reflexive "exactly"/"precisely" scope-hedges in the introduction (signature exactly 6 → 3, precisely 3 → 2); left literal/mathematical "exactly one hole" and "exactly $O_{\min}$" uses intact.
+- Structure unchanged (6 numbered sections, no structure advisory). Tricolon proxy 58 (advisory; residual is in the cross-experiment summary phrasing).
+
+Verify: `voice` 0 errors; `refs` 0 missing, 9 in-text keys / 11 entries, 2 pre-existing unused (Simon 1956 and one other, not introduced here); `build` clean (0 missing-char); `check` => PASS.
+
 ## 2026-05-29 — upgrade pass (Group C): closed the results gap
 
 The paper carried ~30 numeric claims with no committed result artifacts
