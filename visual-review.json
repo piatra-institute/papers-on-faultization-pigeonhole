@@ -1,5 +1,5 @@
 {
-  "pdf_sha256": "120795599c1723e468333948324220d8ac5324b6dd62c5c3136527ae205cd0c0",
+  "pdf_sha256": "2db20db8fa314aaa2f55dd54f8a6add18201095c5ef3073d83fa2baaa8c33a64",
   "page_count": 9,
   "pages_inspected": [
     1,
@@ -13,5 +13,5 @@
     9
   ],
   "all_pages_inspected": true,
-  "notes": "All 9 pages inspected after the prose revision; both figures, the table, equations and references render cleanly. Metadata-only rebuild: the web blurb in metadata.yaml, a hashed build input, changed, so the PDF was re-rendered (66f0d696b84d to 120795599c17); the rendered text is byte-for-byte identical and no page was re-inspected."
+  "notes": "All 9 pages inspected after the prose revision; both figures, the table, equations and references render cleanly. Metadata-only rebuild: the web blurb in metadata.yaml, a hashed build input, changed, so the PDF was re-rendered (66f0d696b84d to 120795599c17); the rendered text is byte-for-byte identical and no page was re-inspected. Metadata-only rebuild: the web blurb in metadata.yaml, a hashed build input, changed, so the PDF was re-rendered (120795599c17 to 2db20db8fa31); the rendered text is byte-for-byte identical and no page was re-inspected."
 }
