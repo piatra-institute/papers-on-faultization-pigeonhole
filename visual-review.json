@@ -1,7 +1,5 @@
 {
-  "schema": 1,
-  "date": "2026-09-05",
-  "pdf_sha256": "3d9828de2baeeabdc21a60e67120b9949091808212b68353641077ca65803c5f",
+  "pdf_sha256": "120795599c1723e468333948324220d8ac5324b6dd62c5c3136527ae205cd0c0",
   "page_count": 9,
   "pages_inspected": [
     1,
@@ -15,5 +13,5 @@
     9
   ],
   "all_pages_inspected": true,
-  "notes": "Rendered latest9pages at110dpi and individually inspected all. Title/subtitle forced break, institution/date separated. Equations/counts readable; both figures and legends fully visible; table complete. Local paragraph guard prevents noise figure interrupting the .5-noise paragraph; references start together onpage9. No clipping, overlap, missing glyphs or broken citations. Final pages reread."
+  "notes": "All 9 pages inspected after the prose revision; both figures, the table, equations and references render cleanly. Metadata-only rebuild: the web blurb in metadata.yaml, a hashed build input, changed, so the PDF was re-rendered (66f0d696b84d to 120795599c17); the rendered text is byte-for-byte identical and no page was re-inspected."
 }

@@ -1,17 +1,33 @@
 slug: on-faultization-pigeonhole
 web_slug: on-faultization-pigeonhole
-title: "On Faultization: Coverage and Failure in a Pigeonhole Model"
-header: "On Faultization: Pigeonhole"
-created: "2026-03"
-date: "March 2026"
+title: 'On Faultization: Coverage and Failure in a Pigeonhole Model'
+header: 'On Faultization: Pigeonhole'
+created: 2026-03
+date: March 2026
 paper_dir: paper
 has_simulation: true
 claims_target: claim-ledger
 repo: git@github.com:piatra-institute/papers-on-faultization-pigeonhole.git
 github: https://github.com/piatra-institute/papers-on-faultization-pigeonhole
-status: published # Existing deployment; September revision has not been deployed.
+status: published
 build_resources:
-  - simulation/output/september-audit/admission.png
-  - simulation/output/september-audit/noise.png
-abstract: |-
-  An empty resource can look like the best destination precisely because it accepts nothing. We study this failure in a small allocation model: ten items move among seven holes using sampled load reports. The pigeonhole bound constrains fully placed assignments, but the usual overload measure records coverage, not balance, and can improve when items become unplaced. A new audit separates these outcomes, pairs random inputs across conditions, and compares load-seeking rules with random movement, staying put, and an arrival-aware alternative. Across thirty seed tapes, closing five holes leaves a mean of 5.03 items unplaced under the original comparison rule. Sampling every hole does not help; trying another candidate after rejection places every item. Tiny Gaussian errors also depend on the implementation. Truncating noisy loads and leaving them unquantized both worsen allocation, whereas nearest-integer rounding preserves the noiseless result at the smallest tested scale. Accounting for the arriving item prevents that endpoint loss, although movement continues. Finally, blocking entry preserves existing occupancy; eviction creates a different recovery problem. These results identify failures in admission information and local cost comparisons. They support a method for inspecting a perturbation model, with no additional inference about cognition or access to mathematical patterns.
+- simulation/output/september-audit/admission.png
+- simulation/output/september-audit/noise.png
+abstract: 'Load-seeking allocation rules can be drawn toward a resource that refuses entry, because a
+  closed resource reports the lowest load. We study this failure in a small allocation model in which
+  ten items move among seven holes using sampled load reports. The pigeonhole bound constrains fully placed
+  assignments, but the usual overload measure records coverage and says nothing about balance, and it
+  improves when items become unplaced. A paired audit separates placement, coverage and balance, gives
+  every condition the same random inputs, and compares load-seeking rules with random movement, staying
+  put, and an arrival-aware comparison. Across thirty seed tapes, closing five holes leaves a mean of
+  5.03 items unplaced under the original comparison rule. Sampling every hole does not help, whereas trying
+  another candidate after rejection places every item. The effect of tiny Gaussian errors depends on how
+  noisy loads are encoded: truncation and unquantized reports both worsen allocation, while nearest-integer
+  rounding preserves the noiseless result at the smallest tested scale. Accounting for the arriving item
+  prevents that endpoint loss, although movement continues. Blocking entry to a hole preserves its existing
+  occupancy, whereas eviction creates a separate recovery problem. The failures lie in admission information
+  and in local cost comparisons. The results support a method for inspecting perturbation models and license
+  no further inference about cognition or access to mathematical patterns.'
+web_blurb: In a ten-item, seven-hole allocation model, closed holes that report zero load trap a greedy
+  rule, leaving 5.03 items unplaced on average while the overload score improves. Noise encoding and pre-arrival
+  cost comparisons explain further failures.

@@ -23,13 +23,15 @@ paper and Levin as motivation, with no claim to have tested a separate ontology.
 
 ## Reverse outline
 
-The 600-plus-word abstract performs most of the argument before the paper starts.
-The introduction and related work repeat the Platonic vocabulary and a seven-item
-novelty list. Sixteen method/result subdivisions are followed by eight
-Classification codas, another taxonomy, a free-lunch table, restated philosophy,
-limitations that contradict earlier claims, and a long recap. Replace this
-structure with a measurement-led account and a small number of diagnostic
-experiments.
+1. *Introduction*
+2. *Model and Outcome Measures*
+3. *Audit Design*
+4. *Healthy Runs and Closed Holes*
+5. *Noisy and Misleading Load Reports*
+6. *Closure, Eviction and Recovery*
+7. *Limitations*
+8. *Conclusion*
+9. *Reproduction*
 
 ## Argument and implementation decisions
 
